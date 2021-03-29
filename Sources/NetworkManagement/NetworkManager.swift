@@ -59,7 +59,7 @@ public class NetworkManager {
     }
 
     @discardableResult
-    func dataTask<T: Decodable>(
+    public func dataTask<T: Decodable>(
         url: URL,
         validator: Validator = DefaultValidator(),
         completion: @escaping (Result<T, NetworkError>) -> Void) -> URLSessionDataTask? {
