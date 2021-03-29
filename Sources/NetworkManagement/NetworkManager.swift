@@ -11,7 +11,7 @@ import UIKit
 public class NetworkManager {
 
     @discardableResult
-    func dataTask<T: Decodable>(
+    public func dataTask<T: Decodable>(
         endpoint: Endpoint<T>,
         validator: Validator = DefaultValidator(),
         completion: @escaping (Result<T, NetworkError>) -> Void) -> URLSessionDataTask? {
@@ -22,6 +22,49 @@ public class NetworkManager {
         }
 
         let task = URLSession.shared.dataTask(with: request) { [weak self] data, res, error in
+            guard let self = self else {
+                return
+            }
+
+            if let validatorError = validator.validate(data: data, res: res, error: error) {
+                completion(.failure(validatorError))
+            }
+
+            guard let data = data else {
+                return
+            }
+
+            if T.self == Data.self {
+                guard let data = data as? T else {
+                    completion(.failure(.badEndpoint))
+                    return
+                }
+
+                completion(.success(data))
+            } else {
+
+                do {
+                    let data = try JSONDecoder().decode(T.self, from: data)
+                    completion(.success(data))
+                } catch {
+                    let error = self.mapError(error)
+                    completion(.failure(error))
+                }
+            }
+        }
+
+        task.resume()
+
+        return task
+    }
+
+    @discardableResult
+    func dataTask<T: Decodable>(
+        url: URL,
+        validator: Validator = DefaultValidator(),
+        completion: @escaping (Result<T, NetworkError>) -> Void) -> URLSessionDataTask? {
+
+        let task = URLSession.shared.dataTask(with: url) { [weak self] data, res, error in
             guard let self = self else {
                 return
             }

@@ -7,13 +7,17 @@
 
 import Foundation
 
-protocol Validator {
+public protocol Validator {
     func validate(data: Data?, res: URLResponse?, error: Error?) -> NetworkError?
 }
 
-class DefaultValidator: Validator {
+public class DefaultValidator: Validator {
 
-    func validate(data: Data?, res: URLResponse?, error: Error?) -> NetworkError? {
+    public init() {
+        
+    }
+
+    public func validate(data: Data?, res: URLResponse?, error: Error?) -> NetworkError? {
         if let error = error {
             print(error)
             return .badRequest

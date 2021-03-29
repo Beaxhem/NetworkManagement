@@ -22,7 +22,7 @@ public enum Endpoints {
         path: "")
 }
 
-struct Endpoint<T: Decodable> {
+public struct Endpoint<T: Decodable> {
 
     var method: HTTPMethod = .get
     var host: String
