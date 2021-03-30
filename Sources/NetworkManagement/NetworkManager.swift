@@ -10,6 +10,10 @@ import UIKit
 
 public class NetworkManager {
 
+    public init() {
+        
+    }
+
     @discardableResult
     public func dataTask<T: Decodable>(
         endpoint: Endpoint<T>,
